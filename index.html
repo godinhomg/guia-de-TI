@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Boas Práticas de T.I. - PMMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdn.rawgit.com/h-ibaldo/Raleway_Fixed_Numerals/master/css/rawline.css" rel="stylesheet"> 
+    <style>
+        body {
+            font-family: 'Rawline', sans-serif;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* --- CONFIGURAÇÃO DO NOVO FUNDO (WALLPAPER) --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            
+            /* Nova imagem de fundo */
+            background-image: url('fundo.png'); 
+            
+            background-repeat: no-repeat;
+            background-position: center top; /* Centraliza e alinha ao topo */
+            background-size: cover; /* Faz a imagem cobrir toda a tela */
+            opacity: 0.25; /* Transparência ajustada para 25% para o fundo aparecer sem atrapalhar a leitura */
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .pmm-blue {
+            background-color: #0c345a; 
+        }
+        .pmm-text {
+            color: #0c345a;
+        }
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            color: white;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background-color: #1e4b77;
+        }
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .content-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border-bottom: 4px solid transparent;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            color: #0c345a;
+            border-bottom-color: #0c345a;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 450px;
+        }
+        /* Estilos para o Markdown da resposta da IA */
+        .prose p { margin-bottom: 0.5em; }
+        .prose strong { color: #0c345a; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.5em; }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+            40% { color: white; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+            60% { text-shadow: .25em 0 0 white, .5em 0 0 rgba(0,0,0,0);}
+            80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white;}
+        }
+    </style>
+</head>
+<body class="bg-slate-100/90">
+
+    <header class="pmm-blue shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-center sm:justify-between items-center">
+            <div class="flex items-center text-white mb-2 sm:mb-0">
+                <span class="text-2xl mr-2">🛡️</span>
+                <span class="text-xl sm:text-2xl font-bold">GUIA T.I. - PMMG</span>
+            </div>
+            <div class="flex flex-wrap justify-center space-x-1 sm:space-x-2 gap-y-2">
+                <button class="nav-btn active" onclick="showSection('home')">Início</button>
+                <button class="nav-btn" onclick="showSection('regras')">Regras</button>
+                <button class="nav-btn" onclick="showSection('dados')">Dados</button>
+                <button class="nav-btn" onclick="showSection('riscos')">Sanções</button>
+                <button class="nav-btn bg-yellow-600 hover:bg-yellow-700" onclick="showSection('ia-tools')">✨ Ferramentas IA</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 pb-20">
+
+        <section id="home" class="content-section active">
+            <div class="text-center bg-white p-6 sm:p-8 rounded-lg shadow-lg border-t-4 border-yellow-500">
+                <h1 class="text-3xl font-bold pmm-text mb-4">Instrução ao CFSd 2024</h1>
+                <p class="text-lg text-slate-700 mb-4">
+                    "Esta ferramenta é o seu guia de bolso para o uso correto da tecnologia na PMMG. A tecnologia é nossa aliada, mas o mau uso é um 'tiro no pé' institucional e pode custar sua carreira."
+                </p>
+                <p class="text-md text-slate-600">
+                    A missão aqui é garantir que vocês saibam usar os sistemas da Corporação sem cometer infrações. Navegue pelas seções para entender suas responsabilidades e utilize a nova aba <strong>✨ Ferramentas IA</strong> para auxílio operacional.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-l-4 border-slate-400" onclick="showSection('regras')">
+                    <h3 class="font-bold text-xl pmm-text mb-2">🖥️ Hardware e Senhas</h3>
+                    <p class="text-slate-600 text-sm">O que você PODE e NÃO PODE fazer no computador da PMMG. (Base: Res. 3854/2006)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-l-4 border-slate-400" onclick="showSection('dados')">
+                    <h3 class="font-bold text-xl pmm-text mb-2">🔒 LGPD e Sigilo</h3>
+                    <p class="text-slate-600 text-sm">Entenda a classificação dos dados que você acessa. (Base: LGPD e Separata 88)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-l-4 border-slate-400" onclick="showSection('riscos')">
+                    <h3 class="font-bold text-xl pmm-text mb-2">⚖️ Riscos e Sanções</h3>
+                    <p class="text-slate-600 text-sm">Ações erradas e suas consequências reais. (Base: Código Penal e Resoluções)</p>
+                </div>
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-white" onclick="showSection('ia-tools')">
+                    <h3 class="font-bold text-xl mb-2 flex items-center">✨ IA Gemini <span class="ml-2 text-xs bg-yellow-500 text-black px-2 py-0.5 rounded">NOVO</span></h3>
+                    <p class="text-slate-300 text-sm">Assistente de Redação Policial e Tira-Dúvidas de Regulamentos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="regras" class="content-section">
+            <h2 class="text-3xl font-bold pmm-text mb-6">Regras Essenciais (Resolução 3854/2006)</h2>
+            <div class="bg-white p-6 sm:p-8 rounded-lg shadow-lg">
+                <div class="border-b border-slate-200 mb-4">
+                    <nav class="flex space-x-4" aria-label="Tabs">
+                        <button id="tab-equipamento-btn" class="tab-btn active" onclick="showTab('equipamento', 'regras')">Equipamentos e Rede</button>
+                        <button id="tab-credenciais-btn" class="tab-btn" onclick="showTab('credenciais', 'regras')">Credenciais e Senhas</button>
+                    </nav>
+                </div>
+
+                <div id="tab-equipamento" class="tab-content active">
+                    <h3 class="text-xl font-semibold pmm-text mb-4">Uso de Equipamentos e Rede</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                            <h4 class="text-lg font-bold text-green-800 mb-2">✔ CERTO</h4>
+                            <ul class="list-disc list-inside text-green-700 space-y-2">
+                                <li>Usar o computador e a rede (REIPM) **exclusivamente** para atividades de serviço. (Art. 4º)</li>
+                                <li>Manter o antivírus corporativo sempre atualizado.</li>
+                                <li>Bloquear a tela (Windows + L) sempre que se afastar da estação de trabalho.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                            <h4 class="text-lg font-bold text-red-800 mb-2">✖ ERRADO</h4>
+                            <ul class="list-disc list-inside text-red-700 space-y-2">
+                                <li>Instalar softwares piratas ou sem licença (jogos, torrents, etc). (Art. 31/101)</li>
+                                <li>Conectar notebook, PC particular ou celular pessoal **na rede cabeada** da PMMG. (Art. 28)</li>
+                                <li>Guardar arquivos pessoais (fotos, músicas, filmes) nos servidores da PMMG. (Art. 4º)</li>
+                                <li>Tentar acessar sites bloqueados pela política de segurança.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-credenciais" class="tab-content">
+                    <h3 class="text-xl font-semibold pmm-text mb-4">Uso de Credenciais (Usuário e Senha)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                            <h4 class="text-lg font-bold text-green-800 mb-2">✔ CERTO</h4>
+                            <ul class="list-disc list-inside text-green-700 space-y-2">
+                                <li>Tratar sua senha como sua assinatura digital. Ela é sua responsabilidade.</li>
+                                <li>Criar senhas fortes, misturando letras, números e símbolos.</li>
+                                <li>Alterar sua senha imediatamente se suspeitar que ela foi comprometida.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                            <h4 class="text-lg font-bold text-red-800 mb-2">✖ ERRADO</h4>
+                            <ul class="list-disc list-inside text-red-700 space-y-2">
+                                <li>**Compartilhar sua senha** com qualquer pessoa (colega, chefe, etc). (Art. 23)</li>
+                                <li>Anotar a senha em papéis (post-it) e colar no monitor ou embaixo do teclado.</li>
+                                <li>Usar a mesma senha da sua rede social pessoal na sua conta da PMMG.</li>
+                                <li>"Emprestar" seu login para um colega registrar um BO no REDS. A responsabilidade será sua.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dados" class="content-section">
+            <h2 class="text-3xl font-bold pmm-text mb-6">Tratamento de Dados (LGPD, LAI e Separata 88)</h2>
+            <div class="bg-white p-6 sm:p-8 rounded-lg shadow-lg">
+                <p class="text-lg text-slate-700 mb-6">No serviço policial, lidamos diariamente com dados sigilosos e pessoais. A lei é rigorosa sobre como tratamos essa informação. O maior risco não é o hacker, é o vazamento interno.</p>
+                
+                <h3 class="text-xl font-semibold pmm-text mb-4">Prazos de Restrição de Acesso</h3>
+                <p class="text-slate-600 mb-4">A Lei de Acesso à Informação (LAI) e a nossa Separata 88 definem prazos máximos de sigilo. Note como a "Informação Pessoal" é tratada com extrema seriedade.</p>
+                
+                <div class="chart-container mb-6">
+                    <canvas id="sigiloChart"></canvas>
+                </div>
+
+                <h3 class="text-xl font-semibold pmm-text mb-4">Definições Chave que Você Precisa Saber</h3>
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-lg pmm-text">Informação Pessoal (LAI, Art. 31 / Separata 88, Art. 27)</h4>
+                        <p class="text-slate-700">Relacionada à intimidade, vida privada, honra e imagem. Inclui: nome, RG, CPF, endereço, telefone de vítimas, autores e testemunhas no REDS. <strong class="text-red-600">Prazo de Restrição: 100 ANOS.</strong></p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-lg pmm-text">Dado Pessoal Sensível (LGPD, Art. 5º)</h4>
+                        <p class="text-slate-700">Origem racial ou étnica, convicção religiosa, opinião política, dado referente à saúde (laudos médicos), dado genético ou **biométrico** (fotos de rosto, digitais). Exige proteção redobrada.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="riscos" class="content-section">
+            <h2 class="text-3xl font-bold pmm-text mb-6">Riscos e Sanções: Ações e Consequências</h2>
+            <p class="text-lg text-slate-700 mb-6 bg-white p-4 rounded-lg shadow-lg">O descumprimento das normas de T.I. não é um "erro leve". É uma falta grave que gera responsabilidade administrativa (PAD/PADS) e criminal. Veja cenários comuns:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-red-600">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-slate-800 mb-3">Cenário: Vazar Dados no WhatsApp</h3>
+                        <p class="text-slate-600 mb-4">"Tirar foto da tela do REDS/CAD com nome, foto ou dados da vítima/autor e mandar em grupos de WhatsApp (mesmo os de policiais)."</p>
+                        <hr class="my-4">
+                        <h4 class="font-semibold text-red-700 mb-2">Consequência (Crime)</h4>
+                        <p class="text-slate-700"><strong>Crime:</strong> Violação de Sigilo Funcional (Art. 325 do Código Penal) e violação da LGPD/LAI.</p>
+                        <p class="text-slate-700 mt-1"><strong>Punição:</strong> Demissão (via PAD/PADS) e Detenção de 6 meses a 2 anos.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-red-600">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-slate-800 mb-3">Cenário: Inserir Dado Falso</h3>
+                        <p class="text-slate-600 mb-4">"Mudar o histórico de um BO no REDS para 'ajudar' um conhecido ou inserir um dado que você sabe que é falso para alterar a verdade sobre o fato."</p>
+                        <hr class="my-4">
+                        <h4 class="font-semibold text-red-700 mb-2">Consequência (Crime)</h4>
+                        <p class="text-slate-700"><strong>Crime:</strong> Inserção de dados falsos em sistema de informações (Art. 313-A do Código Penal).</p>
+                        <p class="text-slate-700 mt-1"><strong>Punição:</strong> Demissão (via PAD/PADS) e Reclusão de 2 a 12 anos.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-yellow-500">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-slate-800 mb-3">Cenário: Compartilhar Senha</h3>
+                        <p class="text-slate-600 mb-4">"Passar sua senha do REDS para o colega 'quebrar o galho' e fechar um BO para você ir embora mais cedo."</t>
+                        <hr class="my-4">
+                        <h4 class="font-semibold text-yellow-700 mb-2">Consequência (Transgressão)</h4>
+                        <p class="text-slate-700"><strong>Norma:</strong> Resolução 3854/2006 (Art. 23). Você se torna responsável por TUDO que o outro militar fizer com seu login.</p>
+                        <p class="text-slate-700 mt-1"><strong>Punição:</strong> Sanção disciplinar grave.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-yellow-500">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-slate-800 mb-3">Cenário: Instalar Software Pirata</h3>
+                        <p class="text-slate-600 mb-4">"Instalar um jogo, ativador do Windows ou 'Office craqueado' no computador da Seção."</p>
+                        <hr class="my-4">
+                        <h4 class="font-semibold text-yellow-700 mb-2">Consequência (Transgressão)</h4>
+                        <p class="text-slate-700"><strong>Norma:</strong> Resolução 3854/2006 (Art. 101). A responsabilidade é de quem instalou, do Chefe da Seção e do Adm. de T.I.</p>
+                        <p class="text-slate-700 mt-1"><strong>Punição:</strong> Sanção disciplinar e risco de segurança (vírus).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ia-tools" class="content-section">
+            <h2 class="text-3xl font-bold pmm-text mb-6 flex items-center">
+                ✨ Ferramentas IA (Powered by Gemini)
+            </h2>
+            
+            <div class="bg-slate-800 text-white p-4 rounded-lg shadow mb-6">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg">Configuração Inicial</h3>
+                        <p class="text-slate-300 text-sm">Para usar as ferramentas abaixo, insira sua Chave de API do Google Gemini. A chave não será salva no servidor.</p>
+                    </div>
+                    <div class="flex-1 w-full md:w-auto">
+                        <input type="password" id="apiKeyInput" placeholder="Cole sua API Key aqui (Ex: AIzaSy...)" class="w-full p-2 rounded text-slate-900 border border-slate-400 focus:outline-none focus:border-yellow-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-lg shadow-lg min-h-[500px]">
+                <div class="border-b border-slate-200 mb-6">
+                    <nav class="flex space-x-8" aria-label="Tabs">
+                        <button id="tab-redacao-btn" class="tab-btn active text-lg" onclick="showTab('redacao', 'ia')">📝 Assistente de Redação Policial</button>
+                        <button id="tab-duvidas-btn" class="tab-btn text-lg" onclick="showTab('duvidas', 'ia')">🤖 Tira-Dúvidas de T.I.</button>
+                    </nav>
+                </div>
+
+                <div id="tab-redacao" class="tab-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="flex flex-col">
+                            <label class="font-semibold text-slate-700 mb-2">Texto Original (Rascunho)</label>
+                            <p class="text-xs text-red-500 mb-2 font-bold uppercase">⚠ Atenção: Não insira nomes reais, endereços ou dados sigilosos. Use nomes fictícios (Ex: "Autor", "Vítima").</p>
+                            <textarea id="redacaoInput" class="w-full h-64 p-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-900 resize-none" placeholder="Digite aqui o texto que deseja melhorar... Ex: 'O indivíduo foi abordado na praça e tava com atitude suspeita...'"></textarea>
+                            
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                <button onclick="processRedacao('formal')" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition flex-1">👔 Tornar Formal</button>
+                                <button onclick="processRedacao('resumir')" class="bg-slate-600 text-white px-4 py-2 rounded hover:bg-slate-500 transition flex-1">✂️ Resumir</button>
+                                <button onclick="processRedacao('gramatica')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 transition flex-1">✅ Corrigir Gramática</button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="font-semibold text-slate-700 mb-2">Resultado (IA)</label>
+                            <div id="redacaoOutput" class="w-full h-64 p-4 bg-slate-50 border border-slate-300 rounded-lg overflow-y-auto prose">
+                                <p class="text-slate-400 italic">O texto melhorado aparecerá aqui...</p>
+                            </div>
+                            <div id="loadingRedacao" class="hidden mt-2 text-blue-900 font-semibold text-center">
+                                Processando<span class="loading-dots"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-duvidas" class="tab-content">
+                    <div class="flex flex-col h-[500px]">
+                        <div id="chatHistory" class="flex-1 bg-slate-50 border border-slate-300 rounded-lg p-4 overflow-y-auto mb-4 space-y-4">
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 p-3 rounded-lg rounded-tl-none max-w-[80%] text-slate-800">
+                                    <strong>Assistente T.I.:</strong> Olá! Sou seu assistente virtual especializado nas normas de T.I. da PMMG. Pode me perguntar sobre a Resolução 3854, LGPD ou prazos de sigilo.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <input type="text" id="chatInput" class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-900" placeholder="Ex: Posso instalar jogos no PC da seção?" onkeypress="handleChatEnter(event)">
+                            <button onclick="sendChat()" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition font-bold">Enviar ➤</button>
+                        </div>
+                        <div id="loadingChat" class="hidden mt-2 text-blue-900 font-semibold text-center text-sm">
+                            Consultando normas<span class="loading-dots"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 mt-8 border-t border-slate-300 bg-slate-200">
+        <p class="text-slate-600 font-semibold">Instrução preparada pelo 3º Sgt Talles Godinho - 12ª RPM.</p>
+        <p class="text-slate-500 text-sm">Polícia Militar de Minas Gerais - 2025</p>
+    </footer>
+
+    <script>
+        let currentSection = 'home';
+        let currentTab = 'equipamento';
+        let sigiloChart = null;
+        const apiKey = ""; // Provided at runtime
+
+        // Contexto das Normas para o Chatbot
+        const contextPMMG = `
+        VOCÊ É UM ASSISTENTE VIRTUAL ESPECIALISTA EM NORMAS DE T.I. DA PMMG. RESPONDA COM BASE NOS SEGUINTES DOCUMENTOS:
+        1. RESOLUÇÃO 3854/2006 (NORMAS T.I.):
+           - Art. 4: Uso dos recursos de T.I. deve ser exclusivamente para atividade de serviço. Proibido tarefas particulares.
+           - Art. 23: Senha é pessoal e intransferível. Proibido compartilhar.
+           - Art. 28: Proibido conectar equipamentos particulares (notebook, celular) na rede cabeada da PMMG.
+           - Art. 31: Proibido instalar softwares piratas, jogos, ou guardar arquivos pessoais (fotos, músicas).
+           - Art. 101: Responsabilidade por software pirata é de quem instalou e de quem permitiu.
+        2. SEPARATA 88 (CLASSIFICAÇÃO DA INFORMAÇÃO):
+           - Ultrassecreto: 25 anos.
+           - Secreto: 15 anos.
+           - Reservado: 5 anos.
+           - Informação Pessoal (Art. 27): Acesso restrito por 100 anos.
+        3. CÓDIGO PENAL:
+           - Art. 313-A: Inserção de dados falsos em sistema de informações.
+           - Art. 325: Violação de sigilo funcional.
+        4. LGPD:
+           - Dados sensíveis (raça, saúde, biometria) exigem proteção máxima.
+        
+        DIRETRIZES DE RESPOSTA:
+        - Seja direto, formal e educado (padrão militar).
+        - Cite o artigo da norma sempre que possível.
+        - Se a pergunta for sobre algo proibido, alerte sobre a sanção disciplinar/criminal.
+        `;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.nav-btn[onclick="showSection('${sectionId}')"]`).classList.add('active');
+            
+            currentSection = sectionId;
+        }
+
+        function showTab(tabId, context) {
+            const container = context === 'ia' ? document.getElementById('ia-tools') : document.getElementById('regras');
+            
+            container.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            container.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}-btn`).classList.add('active');
+        }
+
+        async function callGeminiAPI(prompt) {
+            const key = document.getElementById('apiKeyInput').value;
+            if (!key) {
+                alert("Por favor, insira sua API Key do Gemini na configuração acima.");
+                return null;
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('Erro na API');
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error("Erro:", error);
+                return "Erro ao conectar com a IA. Verifique sua chave API e conexão.";
+            }
+        }
+
+        async function processRedacao(mode) {
+            const input = document.getElementById('redacaoInput').value;
+            if (!input) return;
+
+            document.getElementById('loadingRedacao').classList.remove('hidden');
+            const outputDiv = document.getElementById('redacaoOutput');
+            outputDiv.innerHTML = '';
+
+            let instruction = "";
+            if (mode === 'formal') instruction = "Reescreva o texto abaixo de forma FORMAL, IMPESSOAL e TÉCNICA, adequada para um Boletim de Ocorrência Policial (REDS). Mantenha a clareza.";
+            if (mode === 'resumir') instruction = "Resuma o texto abaixo mantendo apenas os fatos essenciais para um relatório policial.";
+            if (mode === 'gramatica') instruction = "Corrija apenas os erros gramaticais e de pontuação do texto abaixo, mantendo o estilo original.";
+
+            const prompt = `${instruction}\n\nTEXTO ORIGINAL: "${input}"\n\nIMPORTANTE: Se o texto contiver nomes que pareçam reais, substitua por [NOME] ou [ENDEREÇO] para proteger a privacidade.`;
+
+            const result = await callGeminiAPI(prompt);
+            document.getElementById('loadingRedacao').classList.add('hidden');
+            
+            if (result) {
+                outputDiv.innerHTML = marked.parse(result);
+            }
+        }
+
+        async function sendChat() {
+            const inputEl = document.getElementById('chatInput');
+            const question = inputEl.value;
+            if (!question) return;
+
+            // Add User Message
+            const history = document.getElementById('chatHistory');
+            history.innerHTML += `
+                <div class="flex items-start justify-end">
+                    <div class="bg-blue-600 text-white p-3 rounded-lg rounded-tr-none max-w-[80%]">
+                        ${question}
+                    </div>
+                </div>`;
+            
+            inputEl.value = '';
+            history.scrollTop = history.scrollHeight;
+            document.getElementById('loadingChat').classList.remove('hidden');
+
+            // Call API
+            const prompt = `${contextPMMG}\n\nPERGUNTA DO USUÁRIO: ${question}`;
+            const answer = await callGeminiAPI(prompt);
+
+            document.getElementById('loadingChat').classList.add('hidden');
+
+            // Add AI Response
+            if (answer) {
+                history.innerHTML += `
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 p-3 rounded-lg rounded-tl-none max-w-[80%] text-slate-800 prose text-sm">
+                            ${marked.parse(answer)}
+                        </div>
+                    </div>`;
+                history.scrollTop = history.scrollHeight;
+            }
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChat();
+        }
+
+        function renderChart() {
+            if (sigiloChart) {
+                sigiloChart.destroy();
+            }
+            const ctx = document.getElementById('sigiloChart').getContext('2d');
+            sigiloChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'RESERVADO (Ex: Plano de Operação)', 
+                        'SECRETO (Ex: Info. Inteligência)', 
+                        'ULTRASSECRETO (Ex: Plano de Defesa)', 
+                        'INFORMAÇÃO PESSOAL (Ex: Dados no REDS)'
+                    ],
+                    datasets: [{
+                        label: 'Prazo Máximo de Sigilo (em anos)',
+                        data: [5, 15, 25, 100],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(12, 52, 90, 0.8)' // PMMG Blue for emphasis
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(12, 52, 90, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Anos de Restrição'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed.y + ' anos';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('home');
+            renderChart();
+        });
+    </script>
+</body>
+</html>
